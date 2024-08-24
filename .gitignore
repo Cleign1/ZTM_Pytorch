@@ -1,2 +1,3 @@
 venv
 .ipy*
+__pycache__
