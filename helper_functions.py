@@ -16,6 +16,8 @@ from pathlib import Path
 
 import requests
 
+device = 'cuda' if torch.cuda.is_available() else 'cpu'
+
 # Walk through an image classification directory and find out how many files (images)
 # are in each subdirectory.
 import os
@@ -292,3 +294,42 @@ def download_data(source: str,
             os.remove(data_path / target_file)
     
     return image_path
+
+def eval_mode(model: torch.nn.Module,
+              data_loader: torch.utils.data.DataLoader,
+              loss_fn: torch.nn.Module,
+              accuracy_fn,
+              device : torch.device = device):
+    """
+    Evaluates a PyTorch model on a given data loader and returns a dictionary containing the model's name, loss, and accuracy.
+
+    Args:
+        model (torch.nn.Module): Model to be evaluated.
+        data_loader (torch.utils.data.DataLoader): Data loader containing data to evaluate.
+        loss_fn (torch.nn.Module): Loss function to use for evaluation.
+        accuracy_fn (callable): Function to calculate accuracy.
+        device (torch.device, optional): Device to use for evaluation. Defaults to torch.device('cuda:0' if torch.cuda.is_available() else 'cpu').
+
+    Returns:
+        dict: A dictionary containing the model's name, loss, and accuracy.
+    """
+    loss, acc = 0, 0
+    model.eval()
+    with torch.inference_mode():
+        for X, y in tqdm(data_loader):
+            X, y = X.to(device), y.to(device)
+            # make predictions
+            y_pred = model(X)
+            
+            # accumulate the loss and accuracy per batch
+            loss += loss_fn(y_pred, y)
+            acc += accuracy_fn(y_true=y,
+                               y_pred=y_pred.argmax(dim=1))
+        
+        # scale loss and acc to find the average loss/acc per batch
+        loss /= len(data_loader)
+        acc /= len(data_loader)
+        
+    return {'Model_Name': model.__class__.__name__,
+            'Model_loss': loss.item(),
+            'Model_Acc': acc}
