@@ -15,6 +15,7 @@ import zipfile
 from pathlib import Path
 
 import requests
+from tqdm.auto import tqdm
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
