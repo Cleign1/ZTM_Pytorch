@@ -10,6 +10,17 @@ def train_step(model: torch.nn.Module,
                device: torch.device = device):
     '''
     Performs a training with model trying to learn on data_loader
+
+    Args:
+        model (torch.nn.Module): Model to be trained.
+        data_loader (torch.utils.data.DataLoader): Data loader containing data to train on.
+        loss_fn (torch.nn.Module): Loss function to use for training.
+        optimizer (torch.optim.Optimizer): Optimizer to use for training.
+        accuracy_fn (callable): Function to calculate accuracy.
+        device (torch.device, optional): Device to use for training. Defaults to torch.device('cuda:0' if torch.cuda.is_available() else 'cpu').
+
+    Returns:
+        tuple: A tuple of two values. The first is the average loss over all batches, and the second is the average accuracy over all batches.
     '''
     train_loss, train_acc = 0, 0
     
@@ -48,7 +59,18 @@ def test_step(model: torch.nn.Module,
               loss_fn: torch.nn.Module,
               accuracy_fn,
               device: torch.device):
-    '''Performs a testing loop step on model going over data_loader'''
+    '''Performs a testing loop step on model going over data_loader
+
+    Args:
+        model (torch.nn.Module): The model to be tested.
+        data_loader (torch.utils.data.DataLoader): Data loader containing data to test on.
+        loss_fn (torch.nn.Module): Loss function to use for testing.
+        accuracy_fn (callable): Function to calculate accuracy.
+        device (torch.device, optional): Device to use for testing. Defaults to torch.device('cuda:0' if torch.cuda.is_available() else 'cpu').
+
+    Returns:
+        tuple: A tuple of two values. The first is the average loss over all batches, and the second is the average accuracy over all batches.
+    '''
     test_loss, test_acc = 0, 0
     # put the model in eval mode
     model.eval()
