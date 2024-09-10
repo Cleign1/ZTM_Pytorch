@@ -334,3 +334,36 @@ def eval_mode(model: torch.nn.Module,
     return {'Model_Name': model.__class__.__name__,
             'Model_loss': loss.item(),
             'Model_Acc': acc}
+
+def make_predictions(
+    model: torch.nn.Module,
+    data: list,
+    device: torch.device = device):
+    """
+    Makes predictions on a list of data samples with a trained PyTorch model.
+
+    Args:
+        model (torch.nn.Module): Trained PyTorch model.
+        data (list): List of data samples to make predictions on.
+        device (torch.device, optional): Device to use for prediction. Defaults to torch.device('cuda:0' if torch.cuda.is_available() else 'cpu').
+
+    Returns:
+        torch.tensor: A tensor of prediction probabilities of shape (len(data), number_of_classes).
+    """
+    pred_probs = []
+    
+    model.to(device)
+    model.eval()
+    with torch.inference_mode():
+        for sample in data:
+            # prepare the sample (add a batch dimension and pass to target device)
+            sample = torch.unsqueeze(sample, dim=0).to(device)
+            # forward pass (model outputs raw logits)
+            pred_logit = model(sample)
+            # get prediction probability
+            pred_prob = torch.softmax(pred_logit.squeeze(), dim=0)
+            # get pred prob off the gpu for further calculations
+            pred_probs.append(pred_prob.cpu())
+            
+    # stack the pred probs to turn list into a tensor
+    return torch.stack(pred_probs)
