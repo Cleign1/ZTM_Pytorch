@@ -25,23 +25,39 @@ import os
 
 def walk_through_dir(dir_path):
     """
-    Walks through dir_path returning its contents.
-    Args:
-    dir_path (str): target directory
+    Walks through dir_path and prints out its contents.
 
-    Returns:
-    A print out of:
-      number of subdiretories in dir_path
-      number of images (files) in each subdirectory
-      name of each subdirectory
+    Args:
+        dir_path (str): target directory
+
+    Prints:
+        number of subdirectories in dir_path
+        number of images (files) in each subdirectory
+        name of each subdirectory
     """
     for dirpath, dirnames, filenames in os.walk(dir_path):
         print(f"There are {len(dirnames)} directories and {len(filenames)} images in '{dirpath}'.")
 
-def plot_decision_boundary(model: torch.nn.Module, X: torch.Tensor, y: torch.Tensor):
-    """Plots decision boundaries of model predicting on X in comparison to y.
+def plot_decision_boundary(model: torch.nn.Module, X: torch.Tensor, y: torch.Tensor) -> None:
+    """
+    Plots decision boundaries of model predicting on X in comparison to y.
 
-    Source - https://madewithml.com/courses/foundations/neural-networks/ (with modifications)
+    Predictions are made on a grid of points between the minimum and maximum of X
+    and the results are plotted as a heatmap. The original X points are plotted
+    on top of the heatmap with their true labels.
+
+    Parameters
+    ----------
+    model : torch.nn.Module
+        Model to generate predictions from
+    X : torch.Tensor
+        Input data
+    y : torch.Tensor
+        Labels for input data
+
+    Returns
+    -------
+    None
     """
     # Put everything to CPU (works better with NumPy + Matplotlib)
     model.to("cpu")
@@ -79,8 +95,17 @@ def plot_predictions(
     train_data, train_labels, test_data, test_labels, predictions=None
 ):
     """
-  Plots linear training data and test data and compares predictions.
-  """
+    Plot linear training data and test data and compare predictions.
+
+    Args:
+        train_data (torch.Tensor): Training data.
+        train_labels (torch.Tensor): Labels for training data.
+        test_data (torch.Tensor): Test data.
+        test_labels (torch.Tensor): Labels for test data.
+        predictions (torch.Tensor, optional): Predictions to compare to test labels.
+            Defaults to None.
+
+    """
     plt.figure(figsize=(10, 7))
 
     # Plot training data in blue
@@ -131,14 +156,19 @@ def print_train_time(start, end, device=None):
 
 # Plot loss curves of a model
 def plot_loss_curves(results):
-    """Plots training curves of a results dictionary.
+    """Plot training and test loss curves from a results dictionary.
+
+    The results dictionary should contain the following keys:
+        - train_loss: list of training losses
+        - test_loss: list of test losses
+        - train_acc: list of training accuracies
+        - test_acc: list of test accuracies
+
+    This function will plot the training and test loss curves in one subplot,
+    and the training and test accuracy curves in another subplot.
 
     Args:
-        results (dict): dictionary containing list of values, e.g.
-            {"train_loss": [...],
-             "train_acc": [...],
-             "test_loss": [...],
-             "test_acc": [...]}
+        results (dict): dictionary containing training and test loss and accuracy values
     """
     loss = results["train_loss"]
     test_loss = results["test_loss"]
