@@ -3,6 +3,7 @@ A series of helper functions used throughout the course.
 
 If a function gets defined once and could be used over and over, it'll go in here.
 """
+import random
 import torch
 import matplotlib.pyplot as plt
 import numpy as np
@@ -397,3 +398,43 @@ def make_predictions(
             
     # stack the pred probs to turn list into a tensor
     return torch.stack(pred_probs)
+
+from PIL import Image
+def plot_transformed_images(
+    image_paths: list,
+    transform: callable,
+    n: int = 3,
+    seed= None):
+    """
+    Visualizes the effect of a PyTorch transform on a set of images.
+
+    Selects a specified number of random images from a list of paths
+    and applies the given transform to them. The original and transformed
+    images are then plotted side by side.
+
+    Args:
+        image_paths: List of paths to images to sample from.
+        transform: PyTorch transform to apply to the images.
+        n: Number of images to sample and plot. Defaults to 3.
+        seed: Optional seed for the random sampler. Defaults to None.
+
+    Returns:
+        None
+    """
+    if seed:
+        random.seed(seed)
+    random_image_paths = random.sample(image_paths, k=n)
+    for image_path in random_image_paths:
+        with Image.open(image_path) as f:
+            fig, ax = plt.subplots(nrows=1, ncols=2)
+            ax[0].imshow(f)
+            ax[0].set_title(f"Original\nSize: {f.size}")
+            ax[0].axis(False)
+
+            # Transform and plot target image
+            transformed_image = transform(f).permute(1, 2, 0) # note we will need to change shape for matplotlib (C, H, W) -> (H, W, C)
+            ax[1].imshow(transformed_image)
+            ax[1].set_title(f"Transformed\nShape: {transformed_image.shape}")
+            ax[1].axis("off")
+
+            fig.suptitle(f"Class: {image_path.parent.stem}", fontsize=16)
