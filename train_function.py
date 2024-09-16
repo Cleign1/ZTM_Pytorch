@@ -11,8 +11,8 @@ def train(model: torch.nn.Module,
           train_dataloader,
           test_dataloader,
           optimizer,
-          loss_fn: torch.nn.Module = nn.CrossEntropyLoss(),
-          epochs: int = 5, 
+          loss_fn: torch.nn.Module,
+          epochs: int, 
           device=device):
     """
     Train a PyTorch model, and return the results of the training.
@@ -28,9 +28,9 @@ def train(model: torch.nn.Module,
     optimizer : torch.optim.Optimizer
         The optimizer to use for training.
     loss_fn : torch.nn.Module, optional
-        The loss function to use. Defaults to torch.nn.CrossEntropyLoss()
+        The loss function to use.
     epochs : int, optional
-        The number of epochs to train for. Defaults to 5.
+        The number of epochs to train for.
     device : torch.device, optional
         The device to use for training. Defaults to CUDA if available.
 
