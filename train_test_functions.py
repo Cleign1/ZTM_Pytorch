@@ -52,7 +52,8 @@ def train_step(model: torch.nn.Module,
     train_loss /= len(data_loader)
     train_acc /= len(data_loader)
     
-    print(f'Train Loss: {train_loss:.5f} | Train Acc: {train_acc:.2f}%')
+    # print(f'Train Loss: {train_loss:.5f} | Train Acc: {train_acc:.2f}%')
+    return train_loss, train_acc
     
 def test_step(model: torch.nn.Module,
               data_loader: torch.utils.data.DataLoader,
@@ -94,4 +95,6 @@ def test_step(model: torch.nn.Module,
         test_acc /= len(data_loader)
         
         # print out what's happening
-        print(f'\nTest Loss: {test_loss:.5f} | Test Acc: {test_acc:.2f}%\n')    
+        # print(f'\nTest Loss: {test_loss:.5f} | Test Acc: {test_acc:.2f}%\n')    
+        return test_loss, test_acc
+
